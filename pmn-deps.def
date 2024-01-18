@@ -1,0 +1,19 @@
+Bootstrap: library
+From: ubuntu:22.04
+%post
+
+# Set up repositories and install needed things from them
+	apt update
+	DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+	apt install -y python3.10 locales git ncbi-blast+ openjdk-8-jre curl wget make gcc busco python3-pip xterm libxm4 hmmer cpanminus
+	cpanm install IO::Pty::Easy IO::Handle FindBin
+	pip install Bio pandas
+	locale-gen en_US.UTF-8
+
+%environment
+	echo ${LANGUAGE:=$LANG}
+	echo ${LC_ALL:=$LANG}
+	export LANGUAGE
+	export LC_ALL
+%runscript
+	echo "This is the PMN base container with the PMN dependencies. It is used to build pmn.sif. It does nothing when run directly."

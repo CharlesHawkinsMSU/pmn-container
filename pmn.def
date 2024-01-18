@@ -1,1 +1,67 @@
-/home/lynne/Google Drive/Carnegie/Singularity/pmn.def
+Bootstrap: localimage
+From: pmn-base.sif
+%post
+	echo -n 27.0 > /pmn/pt-version
+	export PT_VER=$(cat /pmn/pt-version)
+
+	apt update
+	apt install -y unzip
+	cd /pmn/creation-package
+	git config pull.rebase false
+	git pull
+	cd singularity
+	sed -i "s/\\\$PT_VER/$PT_VER/g" pgdb-pipeline.txt
+	mv pgdb-pipeline.txt ../project-template/
+	cd ..
+
+	cd perl_modules
+	git clone 'https://github.com/solgenomics/perlcyc.git'
+	mv perlcyc/lib/perlcyc.pm /pmn/creation-package/perl_scripts/
+
+	cd /pmn/E2P2
+	mv current_release rpsd_current
+
+	ln -s /usr/bin/rpsblast+ /usr/bin/rpsblast
+
+	mkdir /pmn/savi
+	cd /pmn/savi
+	curl -O 'https://plantcyc.s3.amazonaws.com/SAVI3.1_pmn14.zip'
+	unzip SAVI3.1_pmn14.zip
+	rm SAVI3.1_pmn14.zip
+	ln -s SAVI3.1_pmn14 current
+	chmod a+rx current/runSAVI3.1.sh
+
+
+%environment
+# Set language / locale variables
+	echo ${LANGUAGE:=$LANG}
+	echo ${LC_ALL:=$LANG}
+	export LANGUAGE
+	export LC_ALL
+
+	export PMN_PGP=/pmn/creation-package
+	export PATH=$PATH:$PMN_PGP/bin
+	export PT_VER=$(cat /pmn/pt-version)
+	export PT_LOC=/pmn/ptools-local
+	export PT_APP=/pmn/pathway-tools
+	export PT_EXE=$PT_APP/aic-export/pathway-tools/ptools/$PT_VER/pathway-tools
+	export PMN_PGDBS=/$PT_LOC/pgdbs/user
+	export PMN_METACYC=$PT_APP/aic-export/pgdbs/metacyc
+	export PMN_PLANTCYC=$PMN_PGDBS/plantcyc
+	export PMN_PROJ=/pmn/proj
+	export PMN_BIN=$PMN_PGP/bin
+	export PMN_PERL_SCRIPTS=$PMN_PGP/perl_scripts
+	export PMN_PERL_MODS=$PMN_PGP/perl_modules
+	export PMN_E2P2=/pmn/E2P2
+	export PMN_E2P2_RPSD=4.2
+	export PMN_LISP=$PMN_PGP/lisp
+	export PMN_LISP_FUNS=$PMN_LISP/pmn-lisp-funs.lisp
+	export PMN_BUSCO=/pmn/busco
+	export PMN_BUSCO_DB=eukaryota
+
+# SAVI-related variables
+	export PMN_SAVI=/pmn/savi
+	export PMN_SAVI_FILES=(AIPP.txt CAPP.txt UPP.txt CVP.txt NPP.txt)
+
+%runscript
+	$PMN_BIN/pmn-pipeline $*

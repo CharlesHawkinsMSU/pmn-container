@@ -2,3 +2,4 @@ test.def
 *.deb
 *.sh
 pathway-tools-*-install
+*.sif

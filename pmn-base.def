@@ -1,1 +1,47 @@
-/home/lynne/Google Drive/Carnegie/Singularity/pmn-base.def
+Bootstrap: localimage
+From: pmn-deps.sif
+%post
+
+# Set up the creation package
+	mkdir -p /pmn/proj
+	mkdir -p /pmn/pathway-tools
+	cd /pmn
+	git clone 'git@github-msu:CharlesHawkinsCarnegie/PMN-Pipeline.git' creation-package
+
+# Download E2P2
+	cd /pmn
+	git clone 'https://github.com/carnegie/E2P2.git'
+	cd E2P2
+	mkdir current_release
+	cd current_release
+	priam_release=release_2019-03-07
+	curl -O "https://plantcyc-ftp.storage.googleapis.com/rpsd/$priam_release/README"
+	curl -O "https://plantcyc-ftp.storage.googleapis.com/rpsd/$priam_release/blastdb.tar.gz"
+	curl -O "https://plantcyc-ftp.storage.googleapis.com/rpsd/$priam_release/fasta.tar.gz"
+	curl -O "https://plantcyc-ftp.storage.googleapis.com/rpsd/$priam_release/maps.tar.gz"
+	curl -O "https://plantcyc-ftp.storage.googleapis.com/rpsd/$priam_release/profiles.tar.gz"
+	curl -O "https://plantcyc-ftp.storage.googleapis.com/rpsd/$priam_release/weights.tar.gz"
+	tar xf blastdb.tar.gz
+	tar xf fasta.tar.gz
+	tar xf maps.tar.gz
+	tar xf profiles.tar.gz
+	tar xf weights.tar.gz
+
+# Get the BUSCO eukaryota database
+	mkdir -p /pmn/busco
+	cd /pmn/busco
+	curl -O 'https://busco-data.ezlab.org/v4/data/lineages/eukaryota_odb10.2020-09-10.tar.gz'
+	tar xf eukaryota_odb10.2020-09-10.tar.gz
+	rm eukaryota_odb10.2020-09-10.tar.gz
+
+%files
+# Copy ssh keys - for dev only, to be removed when we make the PMN-Pipeline repository public
+	/home/lynne/.ssh /root/.ssh
+
+%environment
+	echo ${LANGUAGE:=$LANG}
+	echo ${LC_ALL:=$LANG}
+	export LANGUAGE
+	export LC_ALL
+%runscript
+	echo "This is the PMN base container. It is used to build pmn.sif. It does nothing when run directly."
