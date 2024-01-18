@@ -1,0 +1,1 @@
+This is the containerized version of the PMN pipeline used to generate the PMN databases at https://plantcyc.org. The pipeline itself is in the repository at https://github.com/CharlesHawkinsCarnegie/PMN-Pipeline.
