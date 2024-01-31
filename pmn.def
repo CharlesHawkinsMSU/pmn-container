@@ -6,12 +6,15 @@ From: pmn-base.sif
 
 	apt update
 	apt install -y unzip
+	cpanm install LWP::Simple
 	cd /pmn/creation-package
 	git config pull.rebase false
 	git pull
 	cd singularity
 	sed -i "s/\\\$PT_VER/$PT_VER/g" pgdb-pipeline.txt
+	sed -i "s/\\\$PT_VER/$PT_VER/g" pmn-pipeline.conf
 	mv pgdb-pipeline.txt ../project-template/
+	mv pmn-pipeline.conf /etc/
 	cd ..
 
 	cd perl_modules
@@ -29,7 +32,10 @@ From: pmn-base.sif
 	unzip SAVI3.1_pmn14.zip
 	rm SAVI3.1_pmn14.zip
 	ln -s SAVI3.1_pmn14 current
-	chmod a+rx current/runSAVI3.1.sh
+	cd current
+	chmod a+rx runSAVI3.1.sh
+	ln -s runSAVI3.1.sh runSAVI.sh
+
 
 
 %environment
@@ -58,6 +64,7 @@ From: pmn-base.sif
 	export PMN_LISP_FUNS=$PMN_LISP/pmn-lisp-funs.lisp
 	export PMN_BUSCO=/pmn/busco
 	export PMN_BUSCO_DB=eukaryota
+	export PERL5LIB=$PMN_PERL_SCRIPTS
 
 # SAVI-related variables
 	export PMN_SAVI=/pmn/savi
