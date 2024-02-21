@@ -1,42 +1,6 @@
 Bootstrap: localimage
 From: pmn-base.sif
 %post
-	echo -n 27.0 > /pmn/pt-version
-	export PT_VER=$(cat /pmn/pt-version)
-
-	apt update
-	apt install -y unzip
-	cpanm install LWP::Simple
-	cd /pmn/creation-package
-	git config pull.rebase false
-	git pull
-	cd singularity
-	sed -i "s/\\\$PT_VER/$PT_VER/g" pgdb-pipeline.txt
-	sed -i "s/\\\$PT_VER/$PT_VER/g" pmn-pipeline.conf
-	mv pgdb-pipeline.txt ../project-template/
-	mv pmn-pipeline.conf /etc/
-	cd ..
-
-	cd perl_modules
-	git clone 'https://github.com/solgenomics/perlcyc.git'
-	mv perlcyc/lib/perlcyc.pm /pmn/creation-package/perl_scripts/
-
-	cd /pmn/E2P2
-	mv current_release rpsd_current
-
-	ln -s /usr/bin/rpsblast+ /usr/bin/rpsblast
-
-	mkdir /pmn/savi
-	cd /pmn/savi
-	curl -O 'https://plantcyc.s3.amazonaws.com/SAVI3.1_pmn14.zip'
-	unzip SAVI3.1_pmn14.zip
-	rm SAVI3.1_pmn14.zip
-	ln -s SAVI3.1_pmn14 current
-	cd current
-	chmod a+rx runSAVI3.1.sh
-	ln -s runSAVI3.1.sh runSAVI.sh
-
-
 
 %environment
 # Set language / locale variables
