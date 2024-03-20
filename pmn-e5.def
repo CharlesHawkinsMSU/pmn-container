@@ -22,4 +22,3 @@ From: pmn-ptools.sif
 
 	# Put the v5 config file into the E2P2 directory so E2P2 can find it
 	mv /pmn/creation-package/singularity/config.ini config.ini
-
