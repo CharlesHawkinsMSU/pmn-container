@@ -1,6 +1,10 @@
 Bootstrap: localimage
 From: pmn-base.sif
 %post
+	wget -O "/usr/share/keyrings/xpra.asc" https://xpra.org/xpra.asc
+	wget -O "/etc/apt/sources.list.d/xpra.sources" https://raw.githubusercontent.com/Xpra-org/xpra/master/packaging/repos/jammy/xpra.sources
+	DEBIAN_FRONTEND=noninteractive apt update
+	DEBIAN_FRONTEND=noninteractive apt-get -y install xpra xarclock
 
 %environment
 # Set language / locale variables

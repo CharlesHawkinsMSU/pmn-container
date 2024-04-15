@@ -8,9 +8,13 @@ From: pmn-ptools.sif
 	pip install -U 'pip<24.0.0'
 	pip install keras pandas biopython scikit-learn tensorflow
 
+	build_dir=$(pwd)
+
 	# Update the base pipeline, in case it's changed
 	cd /pmn/creation-package
 	git pull
+
+	# Update E2P2 to v5
 
 	# Switch our local repository to the v5 branch
 	cd /pmn/E2P2
@@ -22,3 +26,11 @@ From: pmn-ptools.sif
 
 	# Put the v5 config file into the E2P2 directory so E2P2 can find it
 	mv /pmn/creation-package/singularity/config.ini config.ini
+
+	# Replace RPSD 4.2 with the newer 5.2, currently just a tar file in the build directory
+	rm -rf rpsd_current
+	tar xf $build_dir/rpsd-5.2.tar.bz2
+	mv release rpsd_current
+%files
+# Copy ssh keys - for dev only, to be removed when we make the PMN-Pipeline repository public
+	/home/lynne/.ssh /root/.ssh
