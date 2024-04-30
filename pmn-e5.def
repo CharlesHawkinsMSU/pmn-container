@@ -1,14 +1,15 @@
 Bootstrap: localimage
 From: pmn-ptools.sif
 %post
+	ls
 	# Install additional requirements for E2P2v5
 	apt update
 	apt install -y diamond-aligner
 	# pip 24.0 crashes when trying to install tensorflow, so we'll downgrade to 23.x.x
-	pip install -U 'pip<24.0.0'
-	pip install keras pandas biopython scikit-learn tensorflow
+	$PMN_VENV/bin/pip install scipy==1.12.0 keras==2.15.0 pandas biopython scikit-learn tensorflow
 
-	build_dir=$(pwd)
+	build_dir=$PWD
+	echo $build_dir
 
 	# Update the base pipeline, in case it's changed
 	cd /pmn/creation-package
@@ -24,13 +25,14 @@ From: pmn-ptools.sif
 	git pull --recurse-submodules
 	git submodule update --init --recursive
 
-	# Put the v5 config file into the E2P2 directory so E2P2 can find it
-	mv /pmn/creation-package/singularity/config.ini config.ini
+	# Put the v5 config file into the project template directory so it gets copied into new projects
+	mv /pmn/creation-package/singularity/config.ini /pmn/creation-package/project-template/e2p2-config.ini
 
 	# Replace RPSD 4.2 with the newer 5.2, currently just a tar file in the build directory
 	rm -rf rpsd_current
-	tar xf $build_dir/rpsd-5.2.tar.bz2
+	tar xf /pmn/rpsd-5.2.tar.bz2
 	mv release rpsd_current
 %files
 # Copy ssh keys - for dev only, to be removed when we make the PMN-Pipeline repository public
 	/home/lynne/.ssh /root/.ssh
+	rpsd-5.2.tar.bz2 /pmn/

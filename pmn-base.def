@@ -41,7 +41,7 @@ From: pmn-deps.sif
 
 # Put in the ptools version in the pgdb pipeline default config files and move them to where they go
 	cd /pmn/creation-package/singularity
-	PT_VER=27.0
+	PT_VER=28.0
 	echo $PT_VER > /pmn/pt-version
 	sed -i "s/\\\$PT_VER/$PT_VER/g" pgdb-pipeline.txt
 	sed -i "s/\\\$PT_VER/$PT_VER/g" pmn-pipeline.conf

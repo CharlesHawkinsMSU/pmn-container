@@ -34,9 +34,11 @@ From: pmn-base.sif
 	export PMN_BUSCO_DB=eukaryota
 	export PERL5LIB=$PMN_PERL_SCRIPTS
 
+	export PMN_VENV=/pmn/venv
+
 # SAVI-related variables
 	export PMN_SAVI=/pmn/savi
 	export PMN_SAVI_FILES=(AIPP.txt CAPP.txt UPP.txt CVP.txt NPP.txt)
 
 %runscript
-	$PMN_BIN/pmn-pipeline $*
+	$PMN_VENV/bin/python3 $PMN_BIN/pmn-pipeline $*

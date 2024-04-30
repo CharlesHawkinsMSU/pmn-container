@@ -4,10 +4,16 @@ From: ubuntu:22.04
 
 # Set up repositories and install needed things from them
 	apt update
+	# Setting DEBIAN_FRONTEND is needed for tzdata to not ask for user input during install
 	DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
-	apt install -y python3.10 locales git ncbi-blast+ openjdk-8-jre curl wget make gcc busco python3-pip xterm libxm4 hmmer cpanminus
+	apt install -y python3.10 python3-pip python3-venv locales git ncbi-blast+ openjdk-8-jre curl wget make gcc busco xterm libxm4 hmmer cpanminus
 	cpanm install IO::Pty::Easy IO::Handle FindBin
-	pip install Bio pandas
+
+	# Set up a python venv for our python stuff. This is so that python doesn't load modules in the user's home dir preferentially instead of the ones in the container
+	mkdir -p /pmn
+	python3 -m venv /pmn/venv
+	/pmn/venv/bin/pip install 'pip<24.0'
+	/pmn/venv/bin/pip install Bio pandas
 	locale-gen en_US.UTF-8
 
 %environment
@@ -16,4 +22,4 @@ From: ubuntu:22.04
 	export LANGUAGE
 	export LC_ALL
 %runscript
-	echo "This is the PMN base container with the PMN dependencies. It is used to build pmn.sif. It does nothing when run directly."
+	echo "This is the PMN base container with the PMN dependencies. It is used to build pmn.sif. It does nothing when run directly. You may delete this container once the final build succeeds"
