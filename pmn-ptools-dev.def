@@ -1,7 +1,0 @@
-Bootstrap: localimage
-From: pmn-ptools.sif
-%post
-	cd /pmn/creation-package
-	git pull
-
-	

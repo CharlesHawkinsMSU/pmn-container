@@ -74,7 +74,7 @@ From: pmn-deps.sif
 
 %files
 # Copy ssh keys - for dev only, to be removed when we make the PMN-Pipeline repository public
-	/home/lynne/.ssh /root/.ssh
+	YOUR_HOME/.ssh /root/.ssh
 
 %environment
 	echo ${LANGUAGE:=$LANG}
