@@ -13,7 +13,7 @@ From: ubuntu:22.04
 	mkdir -p /pmn
 	python3 -m venv /pmn/venv
 	/pmn/venv/bin/pip install 'pip<24.0'
-	/pmn/venv/bin/pip install Bio pandas
+	/pmn/venv/bin/pip install Bio pandas scipy==1.12.0 keras==2.15.0 biopython scikit-learn tensorflow
 	locale-gen en_US.UTF-8
 
 %environment

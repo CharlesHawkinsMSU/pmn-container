@@ -1,10 +1,11 @@
 Bootstrap: localimage
 From: pmn-base.sif
 %post
-	wget -O "/usr/share/keyrings/xpra.asc" https://xpra.org/xpra.asc
-	wget -O "/etc/apt/sources.list.d/xpra.sources" https://raw.githubusercontent.com/Xpra-org/xpra/master/packaging/repos/jammy/xpra.sources
+	#wget -O "/usr/share/keyrings/xpra.asc" https://xpra.org/xpra.asc
+	#wget -O "/etc/apt/sources.list.d/xpra.sources" https://raw.githubusercontent.com/Xpra-org/xpra/master/packaging/repos/jammy/xpra.sources
 	DEBIAN_FRONTEND=noninteractive apt update
-	DEBIAN_FRONTEND=noninteractive apt-get -y install xpra xarclock
+	DEBIAN_FRONTEND=noninteractive apt-get -y install xarclock
+	#DEBIAN_FRONTEND=noninteractive apt-get -y install xpra
 
 %environment
 # Set language / locale variables
@@ -27,7 +28,7 @@ From: pmn-base.sif
 	export PMN_PERL_SCRIPTS=$PMN_PGP/perl_scripts
 	export PMN_PERL_MODS=$PMN_PGP/perl_modules
 	export PMN_E2P2=/pmn/E2P2
-	export PMN_E2P2_RPSD=4.2
+	export PMN_E2P2_RPSD=5.2
 	export PMN_LISP=$PMN_PGP/lisp
 	export PMN_LISP_FUNS=$PMN_LISP/pmn-lisp-funs.lisp
 	export PMN_BUSCO=/pmn/busco
