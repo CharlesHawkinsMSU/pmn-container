@@ -18,8 +18,5 @@ pmn-deps.sif: pmn-deps.def
 pmn-ptools.sif: pmn.sif pmn-ptools.def
 	$(SINGULARITY) build $(BUILD_FLAGS) -F pmn-ptools.sif pmn-ptools.def
 
-pmn-e5.sif: pmn-ptools.sif pmn-e5.def
-	$(SINGULARITY) build $(BUILD_FLAGS) -F pmn-e5.sif pmn-e5.def
-
 shell: pmn.sif
 	$(SINGULARITY) shell pmn.sif
