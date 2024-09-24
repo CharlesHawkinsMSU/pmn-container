@@ -11,7 +11,7 @@ From: pmn-deps.sif
 	mkdir -p /pmn/proj
 	mkdir -p /pmn/pathway-tools
 	cd /pmn
-	git clone 'git@github-msu:CharlesHawkinsCarnegie/PMN-Pipeline.git' creation-package
+	git clone 'https://github.com/CharlesHawkinsMSU/PMN-Pipeline.git' creation-package
 
 # Download E2P2
 	cd /pmn
@@ -71,10 +71,6 @@ From: pmn-deps.sif
 	chmod -R a+r current
 	cd current
 	chmod a+x runSAVI.sh
-
-%files
-# Copy ssh keys - for dev only, to be removed when we make the PMN-Pipeline repository public
-	YOUR_HOME/.ssh /root/.ssh
 
 %environment
 	echo ${LANGUAGE:=$LANG}

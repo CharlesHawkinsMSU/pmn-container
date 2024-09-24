@@ -1,4 +1,4 @@
-This is the containerized version of the PMN pipeline used to generate the PMN databases at https://plantcyc.org. The pipeline itself is in the repository at https://github.com/CharlesHawkinsCarnegie/PMN-Pipeline. The general documentation is there.
+This is the containerized version of the PMN pipeline used to generate the PMN databases at https://plantcyc.org. The pipeline itself is in the repository at https://github.com/CharlesHawkinsMSU/PMN-Pipeline. The general documentation is there.
 
 ### Building
 You can build it using:
