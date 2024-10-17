@@ -2,7 +2,14 @@
 
 This is the containerized version of the PMN pipeline used to generate the PMN databases at https://plantcyc.org. The pipeline itself is in the repository at https://github.com/CharlesHawkinsMSU/PMN-Pipeline. The general documentation is there.
 
+### Documentation
+
+There is a quickstart guide at https://github.com/CharlesHawkinsMSU/PMN-Pipeline/blob/main/Quickstart.md
+
+There is a full manual at https://github.com/CharlesHawkinsMSU/PMN-Pipeline/blob/main/Manual.md
+
 ### Building
+You will need a copy of Pathway Tools to build this container. See the quickstart guide or the manual linked above.
 You can build it using:
 
     make pmn-ptools.sif
