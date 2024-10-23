@@ -68,9 +68,10 @@ From: pmn-deps.sif
 	unzip ${savi_version}.zip
 	rm ${savi_version}.zip
 	ln -s ${savi_version} current
-	chmod -R a+r current
-	cd current
-	chmod a+x runSAVI.sh
+	chmod a+x ${savi_version} ${savi_version}/input
+	chmod -R a+r ${savi_version}
+	chmod a+rx ${savi_version}/runSAVI.sh
+	sed -i 's/1024/2048/' ${savi_version}/runSAVI.sh
 
 %environment
 	echo ${LANGUAGE:=$LANG}

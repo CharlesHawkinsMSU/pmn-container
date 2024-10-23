@@ -6,6 +6,7 @@ From: pmn-base.sif
 	DEBIAN_FRONTEND=noninteractive apt update
 	DEBIAN_FRONTEND=noninteractive apt-get -y install xarclock
 	#DEBIAN_FRONTEND=noninteractive apt-get -y install xpra
+	/pmn/venv/bin/pip install requests
 
 %environment
 # Set language / locale variables
