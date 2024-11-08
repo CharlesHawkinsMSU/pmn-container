@@ -1,7 +1,7 @@
 pmn:= pmn.sif
 pmn-base:= pmn-base.sif
 pmn-deps:= pmn-deps.sif
-SINGULARITY_TMPDIR=tmp
+SINGULARITY_TMPDIR=${SINGULARITY_TMPDIR-$PWD/tmp}
 SINGULARITY=singularity
 ifneq ($(EUID), 0)
 	BUILD_FLAGS = --fakeroot
