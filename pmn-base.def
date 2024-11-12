@@ -1,10 +1,20 @@
-Bootstrap: localimage
-From: pmn-deps.sif
+Bootstrap: library
+From: ubuntu:22.04
 %post
 
 # Install dependencies
 	apt update
-	apt install -y unzip diamond-aligner xvfb
+	# Setting DEBIAN_FRONTEND is needed for tzdata to not ask for user input during install
+	DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata xarclock
+	apt install -y python3.10 python3-pip python3-venv locales git ncbi-blast+ openjdk-8-jre curl wget make gcc busco xterm libxm4 hmmer cpanminus rlwrap diamond-aligner xvfb unzip
+	cpanm install IO::Pty::Easy IO::Handle FindBin
+
+	# Set up a python venv for our python stuff. This is so that python doesn't load modules in the user's home dir preferentially instead of the ones in the container
+	mkdir -p /pmn
+	python3 -m venv /pmn/venv
+	/pmn/venv/bin/pip install 'pip<22.0.2'
+	/pmn/venv/bin/pip install Bio==1.7.1 pandas==2.2.3 scipy==1.12.0 keras==2.15.0 biopython==1.84 scikit-learn==1.5.2 tensorflow==2.15.1 requests==2.32.3
+	locale-gen en_US.UTF-8
 	cpanm install LWP::Simple
 
 # Set up the creation package
@@ -79,4 +89,4 @@ From: pmn-deps.sif
 	export LANGUAGE
 	export LC_ALL
 %runscript
-	echo "This is the PMN base container. It is used to build pmn.sif. It does nothing when run directly."
+	$PMN_VENV/bin/python3 $PMN_BIN/pmn-pipeline $*

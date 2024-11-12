@@ -9,8 +9,8 @@ function needs_arg() {
 	fi
 }
 
-singleton_stages="newproj shell build pull-build full-rebuild"
-# Should unset all vars used for command-line arguments and flags here, along with pmn_args (the array of positional arguments)
+singleton_stages="newproj shell lisp build update-build full-rebuild"
+# Should unset all vars used for command-line arguments and flags here, along with pmn_args (the array of arguments to be passed to pmn-pipeline.py)
 unset pmn_args stages singleton_stage
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -63,7 +63,9 @@ echo $SINGULARITY_BIND
 
 if [[ $singleton_stage == "shell" ]]; then
 	cmd="singularity shell $PMN_CONTAINER"
-elif [[ $singleton_stage == "build" || $singleton_stage == "pull-build" || $singleton_stage == "full-rebuild" ]]; then
+elif [[ $singleton_stage == "lisp" ]]; then
+	cmd="singularity exec $PMN_CONTAINER rlwrap -c -q '\"' -pgreen /pmn/pathway-tools/ptlisp -load /pmn/creation-package/lisp/pmn-lisp-funs.lisp"
+elif [[ $singleton_stage == "build" || $singleton_stage == "update-build" || $singleton_stage == "full-rebuild" ]]; then
 	cd $PMN_BUILD_DIR
 	tmp_fs=$(df /tmp | tail -1 | awk '{print $1}')
 	if [[ $tmp_fs == "tmpfs" ]]; then
@@ -73,10 +75,10 @@ elif [[ $singleton_stage == "build" || $singleton_stage == "pull-build" || $sing
 		export TMPDIR=$tmpdir
 		export SINGULARITY_TMPDIR=$tmpdir
 	fi
-	if [[ $singleton_stage == "pull-build" ]]; then
+	if [[ $singleton_stage == "update-build" ]]; then
 		touch $PMN_BUILD_DIR/pmn-ptools.def
 	elif [[ $singleton_stage == "full-rebuild" ]]; then
-		touch $PMN_BUILD_DIR/pmn-deps.def
+		touch $PMN_BUILD_DIR/pmn-base.def
 	fi
 	cmd="make pmn-ptools.sif"
 else
