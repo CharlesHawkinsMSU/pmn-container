@@ -40,6 +40,8 @@ while [[ $# -gt 0 ]]; do
 	esac
 done
 
+SINGULARITY=${SINGULARITY-singularity}
+
 PMN_BUILD_DIR=${PMN_BUILD_DIR-$(dirname $(readlink -f $0))}
 PMN_CONTAINER=${PMN_CONTAINER-$PMN_BUILD_DIR/pmn-ptools.sif}
 export SINGULARITY_BIND
@@ -62,9 +64,9 @@ echo $SINGULARITY_BIND
 # These singleton stages are executed by this script rather than by pmn-pipeline.py in the container
 
 if [[ $singleton_stage == "shell" ]]; then
-	cmd="singularity shell $PMN_CONTAINER"
+	cmd="$SINGULARITY shell $PMN_CONTAINER"
 elif [[ $singleton_stage == "lisp" ]]; then
-	cmd="singularity exec $PMN_CONTAINER rlwrap -c -q '\"' -pgreen /pmn/pathway-tools/ptlisp -load /pmn/creation-package/lisp/pmn-lisp-funs.lisp"
+	cmd="$SINGULARITY exec $PMN_CONTAINER rlwrap -c -q '\"' -pgreen /pmn/pathway-tools/ptlisp -load /pmn/creation-package/lisp/pmn-lisp-funs.lisp"
 elif [[ $singleton_stage == "build" || $singleton_stage == "update-build" || $singleton_stage == "full-rebuild" ]]; then
 	cd $PMN_BUILD_DIR
 	tmp_fs=$(df /tmp | tail -1 | awk '{print $1}')
