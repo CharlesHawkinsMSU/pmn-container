@@ -5,28 +5,66 @@ From: ubuntu:22.04
 # Install dependencies
 	apt update
 	# Setting DEBIAN_FRONTEND is needed for tzdata to not ask for user input during install
-	DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata xarclock
-	apt install -y python3.10 python3-pip python3-venv locales git ncbi-blast+ openjdk-8-jre curl wget make gcc busco xterm libxm4 hmmer cpanminus rlwrap diamond-aligner xvfb unzip
-	cpanm install IO::Pty::Easy IO::Handle FindBin
+	export DEBIAN_FRONTEND=noninteractive
+	apt install -y \
+		tzdata=2024a-0ubuntu0.22.04.1 \
+		xarclock=1.0-17 \
+		python3.10=3.10.12-1~22.04.6 \
+		python3-pip=22.0.2+dfsg-1ubuntu0.5 \
+		python3-venv=3.10.6-1~22.04.1 \
+		locales=2.35-0ubuntu3.8 \
+		git=1:2.34.1-1ubuntu1.11 \
+		ncbi-blast+=2.12.0+ds-3build1 \
+		openjdk-8-jre=8u432-ga~us1-0ubuntu2~22.04 \
+		curl=7.81.0-1ubuntu1.18 \
+		wget=1.21.2-2ubuntu1.1 \
+		make=4.3-4.1build1 \
+		gcc=4:11.2.0-1ubuntu1 \
+		libxm4=2.3.8-3 \
+		hmmer=3.3.2+dfsg-1 \
+		cpanminus=1.7045-1 \
+		rlwrap=0.43-1build3 \
+		diamond-aligner=2.0.14-1 \
+		xvfb=2:21.1.4-2ubuntu1.7~22.04.12 \
+		unzip=6.0-26ubuntu3.2 \
+		libssl-dev=3.0.2-0ubuntu1.18 \
+		xterm=372-1ubuntu1
+
+	cpanm install \
+		IO::Pty::Easy@0.10 \
+		IO::Handle@1.55 \
+		FindBin@1.54 \
+		LWP::Simple@6.77
 
 	# Set up a python venv for our python stuff. This is so that python doesn't load modules in the user's home dir preferentially instead of the ones in the container
 	mkdir -p /pmn
 	python3 -m venv /pmn/venv
-	/pmn/venv/bin/pip install 'pip<22.0.2'
-	/pmn/venv/bin/pip install Bio==1.7.1 pandas==2.2.3 scipy==1.12.0 keras==2.15.0 biopython==1.84 scikit-learn==1.5.2 tensorflow==2.15.1 requests==2.32.3
+	/pmn/venv/bin/pip install 'pip==22.0.2'
+	/pmn/venv/bin/pip  install \
+		Bio==1.7.1 \
+		pandas==2.2.3 \
+		scipy==1.12.0 \
+		keras==2.15.0 \
+		biopython==1.84 \
+		scikit-learn==1.5.2 \
+		tensorflow==2.15.1 \
+		requests==2.32.3
 	locale-gen en_US.UTF-8
-	cpanm install LWP::Simple
 
 # Set up the creation package
 	mkdir -p /pmn/proj
 	mkdir -p /pmn/pathway-tools
 	cd /pmn
 	git clone 'https://github.com/CharlesHawkinsMSU/PMN-Pipeline.git' creation-package
+	cd creation-package
+	git checkout v1.0.1
+	#wget 'https://github.com/CharlesHawkinsMSU/PMN-Pipeline/archive/refs/tags/v1.0.0.tar.gz' -O - | tar xz --transform 's/PMN-Pipeline[^\/]*/creation-package/'
 
 # Download E2P2
 	cd /pmn
 	git clone 'https://github.com/carnegie/E2P2.git' E2P2 --recurse-submodules
 	cd E2P2
+	git checkout --recurse-submodules c89d711475b0614a4dd7acc3a01f8e9e71abe4a7
 	mkdir rpsd_current
 	cd rpsd_current
 	rpsd_release=release_2024_07_31
@@ -45,13 +83,6 @@ From: ubuntu:22.04
 	# Put the v5 config file into the project template directory so it gets copied into new projects
 	mv /pmn/creation-package/singularity/e2p2-config.ini /pmn/creation-package/project-template/e2p2-config.ini
 
-# Get the BUSCO eukaryota database
-#	mkdir -p /pmn/busco
-#	cd /pmn/busco
-#	curl -O 'https://busco-data.ezlab.org/v4/data/lineages/eukaryota_odb10.2020-09-10.tar.gz'
-#	tar xf eukaryota_odb10.2020-09-10.tar.gz
-#	rm eukaryota_odb10.2020-09-10.tar.gz
-
 # Put in the ptools version in the pgdb pipeline default config files and move them to where they go
 	cd /pmn/creation-package/singularity
 	PT_VER=28.0
@@ -63,9 +94,13 @@ From: ubuntu:22.04
 	cd ..
 
 # Download perlcyc
+	cd /pmn/creation-package
+	mkdir -p perl_modules
 	cd perl_modules
 	git clone 'https://github.com/solgenomics/perlcyc.git'
-	mv perlcyc/lib/perlcyc.pm /pmn/creation-package/perl_scripts/
+	cd perlcyc
+	git checkout 6ed74de1a085aafa53852436525ee92938a67511
+	mv lib/perlcyc.pm /pmn/creation-package/perl_scripts/
 
 # Name of rpsblast has changed, scripts expect old name
 	ln -s /usr/bin/rpsblast+ /usr/bin/rpsblast
