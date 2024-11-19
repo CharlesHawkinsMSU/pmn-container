@@ -63,6 +63,7 @@ From: ubuntu:22.04
 	cd ..
 
 # Download perlcyc
+	mkdir -p perl_modules
 	cd perl_modules
 	git clone 'https://github.com/solgenomics/perlcyc.git'
 	mv perlcyc/lib/perlcyc.pm /pmn/creation-package/perl_scripts/
