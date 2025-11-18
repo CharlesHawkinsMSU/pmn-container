@@ -36,6 +36,7 @@ while [[ $# -gt 0 ]]; do
 				singleton_stage=$1
 			elif [[ ${!subcmds[@]} =~ [[:space:]]?${1}[[:space:]]? ]]; then
 				subcmd=$1
+				shift
 				pmn_args+=("$@")
 				break
 			fi
@@ -69,9 +70,9 @@ echo $SINGULARITY_BIND
 # These singleton stages are executed by this script rather than by pmn-pipeline.py in the container
 
 if [[ $singleton_stage == "shell" ]]; then
-	cmd="$SINGULARITY shell $PMN_CONTAINER"
+	cmd=($SINGULARITY shell $PMN_CONTAINER)
 elif [[ $singleton_stage == "lisp" ]]; then
-	cmd="$SINGULARITY exec $PMN_CONTAINER rlwrap -c -q '\"' -pgreen /pmn/pathway-tools/ptlisp -load /pmn/creation-package/lisp/pmn-lisp-funs.lisp"
+	cmd=($SINGULARITY exec $PMN_CONTAINER rlwrap -c -q '\"' -pgreen /pmn/pathway-tools/ptlisp -load /pmn/creation-package/lisp/pmn-lisp-funs.lisp)
 elif [[ $singleton_stage == "build" || $singleton_stage == "update-build" || $singleton_stage == "full-rebuild" ]]; then
 	cd $PMN_BUILD_DIR
 	tmp_fs=$(df /tmp | tail -1 | awk '{print $1}')
@@ -87,13 +88,13 @@ elif [[ $singleton_stage == "build" || $singleton_stage == "update-build" || $si
 	elif [[ $singleton_stage == "full-rebuild" ]]; then
 		touch $PMN_BUILD_DIR/pmn-base.def
 	fi
-	cmd="make pmn-ptools.sif"
+	cmd=(make pmn-ptools.sif)
 elif [ $subcmd ]; then
 	subcmd_exe="${subcmds[$subcmd]}"
-	cmd="$SINGULARITY exec $PMN_CONTAINER $pmn_bindir/$subcmd_exe ${pmn_args[*]}"
+	cmd=($SINGULARITY exec $PMN_CONTAINER $pmn_bindir/$subcmd_exe "${pmn_args[@]}")
 else
-	cmd="${PMN_CONTAINER} ${pmn_args[*]}"
+	cmd=(${PMN_CONTAINER} ${pmn_args[*]})
 fi
 
-echo $cmd
-$cmd
+echo "${cmd[@]}"
+"${cmd[@]}"
