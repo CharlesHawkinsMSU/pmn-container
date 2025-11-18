@@ -8,10 +8,12 @@ function needs_arg() {
 		exit 1
 	fi
 }
-
+pmn_bindir=/pmn/creation-package/bin
+declare -A subcmds
+subcmds=(["countlines"]="countlines" ["filter-table"]="filter_table.py" ["fix-ncbi-taxon"]="fix_ncbi_taxon.py" ["guess-fa-header"]="guess_fa_header.py" ["merge-tables"]="merge-tables.py" ["autoname-pgdbs"]="pgdb_autoname.py" ["select-cols"]="select-table-cols.py" ["new-pgdb-versions"]="new_pgdb_version.py")
 singleton_stages="newproj shell lisp build update-build full-rebuild"
 # Should unset all vars used for command-line arguments and flags here, along with pmn_args (the array of arguments to be passed to pmn-pipeline.py)
-unset pmn_args stages singleton_stage
+unset pmn_args stages singleton_stage subcmd
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		-[^-]?*)
@@ -26,13 +28,16 @@ while [[ $# -gt 0 ]]; do
 			if [ $singleton_stage ]; then
 				echo "Stage $singleton_stage cannot be combined with other stages"
 				exit 1
-			fi
-			if [[ $singleton_stages =~ [[:space:]]?${1}[[:space:]]? ]]; then
+			elif [[ $singleton_stages =~ [[:space:]]?${1}[[:space:]]? ]]; then
 				if [ $stages ]; then
 				echo "Stage $1 cannot be combined with other stages"
 				exit 1
 				fi
 				singleton_stage=$1
+			elif [[ ${!subcmds[@]} =~ [[:space:]]?${1}[[:space:]]? ]]; then
+				subcmd=$1
+				pmn_args+=("$@")
+				break
 			fi
 			stages+=("$1")
 			pmn_args+=("$1")
@@ -83,6 +88,9 @@ elif [[ $singleton_stage == "build" || $singleton_stage == "update-build" || $si
 		touch $PMN_BUILD_DIR/pmn-base.def
 	fi
 	cmd="make pmn-ptools.sif"
+elif [ $subcmd ]; then
+	subcmd_exe="${subcmds[$subcmd]}"
+	cmd="$SINGULARITY exec $PMN_CONTAINER $pmn_bindir/$subcmd_exe ${pmn_args[*]}"
 else
 	cmd="${PMN_CONTAINER} ${pmn_args[*]}"
 fi
